@@ -1,0 +1,68 @@
+#!/bin/bash
+#Ayudamequieromatar:D
+
+function Nombre() {
+	while true; do
+		read -r -p "Buena noshe. Ingrese el nombre que le quiere poner a su monigote: " name
+		if grep -q "$name" /etc/passwd; then
+			echo " Ya existe esta vaina"
+		else
+			echo "Se ha guardado tu coso"
+			break
+		fi
+	done	
+}
+
+function Grupo() {
+	read -r -p "Anota el grupo en el que deseas estar: " grupo
+	if grep -q "$grupo" /etc/group; then
+		echo "Felicidades. Tuviste fe, que si existe"
+	else
+		echo "No existe, asi que lo vamos a crear. Tas de acuerdo? Si o no?" echo -e "No me importa, procedamos :D "
+		groupadd "$grupo" 
+	fi		
+}
+
+function Hogar() {
+	while true; do
+		read -r -p "Cual es tu directorio hogar? " hogar
+		if grep -q ":/home/$hogar:" /etc/passwd; then
+			echo "Ya lo usaron. Sorry to much. Escribe otro: "
+		elif [ -d /home/"$hogar" ]; then
+			echo "Existe. Se encuentra desocupado y listo para usar "
+			break
+		else 
+			echo "No existe, tons lo vamos a crear uwu "
+			mkdir /home/"$hogar"
+			break 
+		fi	
+	done
+}
+
+function Contrasenia() {
+	while true; do
+		read -r -s -p "Asigna una contrasenia: " contrasenia
+		echo ""
+		if [[ "$contrasenia" =~ [A-Z] ]] &&    
+		       [[ "$contrasenia" =~ [a-z] ]] &&    
+		       [[ "$contrasenia" =~ [0-9] ]] &&    
+		       [[ "$contrasenia" =~ [@$%^&+=] ]] && 
+		       [[ ${#contrasenia} -ge 8 ]]; then  
+			echo "Contrasenia validada"
+			break
+		else
+			echo "Error: No le supiste a la vida. Esa contrasenia no es buena, tons prueba otra: "
+		fi
+	done		
+}
+
+Nombre
+echo ""
+Contrasenia 
+echo "$name:$contrasenia" | chpasswd
+Grupo 
+echo ""
+Hogar 
+echo ""
+
+useradd -d /home/$hogar -m -k /etc.skel -s /bin/sh -c "$name" -g $grupo $name
