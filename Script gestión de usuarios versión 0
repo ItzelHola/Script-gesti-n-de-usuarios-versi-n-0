@@ -18,7 +18,7 @@ function Grupo() {
 	if grep -q "$grupo" /etc/group; then
 		echo "Felicidades. Tuviste fe, que si existe"
 	else
-		echo "No existe, asi que lo vamos a crear. Tas de acuerdo? Si o no?" echo -e "No me importa, procedamos :D "
+		echo -e "No existe, asi que lo vamos a crear. Tas de acuerdo? Si o no? \nNo me importa, procedamos :D "
 		groupadd "$grupo" 
 	fi		
 }
@@ -42,12 +42,12 @@ function Hogar() {
 function Contrasenia() {
 	while true; do
 		read -r -s -p "Asigna una contrasenia: " contrasenia
-		echo ""
-		if [[ "$contrasenia" =~ [A-Z] ]] &&    
-		       [[ "$contrasenia" =~ [a-z] ]] &&    
-		       [[ "$contrasenia" =~ [0-9] ]] &&    
-		       [[ "$contrasenia" =~ [@$%^&+=] ]] && 
-		       [[ ${#contrasenia} -ge 8 ]]; then  
+		echo
+		if [[ ${#contrasenia} -ge 8 &&
+				"$contrasenia" =~ [A-Z]  &&    
+		        "$contrasenia" =~ [a-z] &&    
+		        "$contrasenia" =~ [0-9]  &&    
+		        "$contrasenia" =~ [#\$@_\-] ]]; then  
 			echo "Contrasenia validada"
 			break
 		else
@@ -58,11 +58,11 @@ function Contrasenia() {
 
 Nombre
 echo ""
-Contrasenia 
-echo "$name:$contrasenia" | chpasswd
 Grupo 
 echo ""
 Hogar 
 echo ""
 
-useradd -d /home/$hogar -m -k /etc.skel -s /bin/sh -c "$name" -g $grupo $name
+useradd -d /home/$hogar -s /bin/sh -c "$name" -g $grupo $name
+Contrasenia 
+echo "$name:$contrasenia" | chpasswd
